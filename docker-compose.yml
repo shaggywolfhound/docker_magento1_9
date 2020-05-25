@@ -1,0 +1,64 @@
+version: '3'
+services:
+
+  php:
+    build: ./php/
+    container_name: m1.9_www
+    networks:
+      - backend-net
+    #links:
+    #  - mysql_db
+    volumes:
+      - ./public_html:/var/www/m1.9/public_html/
+      - ./test:/var/www/html/test/
+
+  apache:
+    build: ./apache/
+    container_name: m1.9_httpd
+    ports:
+      - 80:80
+    networks:
+      - frontend-net
+      - backend-net
+    depends_on:
+      - php
+    #  - mysql_db
+    volumes:
+      - ./public_html/:/var/www/m1.9/public_html/
+
+  mysql_db:
+    container_name: m1.9_mysql
+    image: mysql:latest
+    environment:
+      MYSQL_DATABASE: bestwayw_magento
+      MYSQL_USER: bestway
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: wibble
+    networks:
+      - backend-net
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data/db:/var/lib/mysql:delegated
+
+  phpmyadmin_m19:
+    container_name: phpmyadmin_m19
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: mysql_db
+      PMA_USER: root
+      PMA_PASSWORD: wibble
+    networks:
+      - frontend-net
+      - backend-net
+    depends_on:
+      - mysql_db
+    ports:
+      - "9090:80"
+    tty: true
+    links:
+      - mysql_db
+
+networks:
+  frontend-net:
+  backend-net:
