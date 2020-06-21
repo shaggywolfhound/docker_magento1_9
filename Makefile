@@ -1,5 +1,6 @@
 start:
 	docker-compose up -d
+	@echo All done frontend=m19.local
 
 start-build:
 	docker-compose up -d --build

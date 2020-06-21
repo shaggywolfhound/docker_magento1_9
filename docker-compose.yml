@@ -6,11 +6,9 @@ services:
     container_name: m1.9_www
     networks:
       - backend-net
-    #links:
-    #  - mysql_db
     volumes:
       - ./public_html:/var/www/m1.9/public_html/
-      - ./test:/var/www/html/test/
+      - ./conf/:/usr/local/etc/php/
 
   apache:
     build: ./apache/
@@ -22,7 +20,7 @@ services:
       - backend-net
     depends_on:
       - php
-    #  - mysql_db
+      - mysql_db
     volumes:
       - ./public_html/:/var/www/m1.9/public_html/
 
